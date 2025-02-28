@@ -41,9 +41,9 @@ func EvaluateExpression(experimentExpression string, requestExpression map[strin
 	}
 
 	populateParamPayload := PopulateParamPayload{
-		expression:    expression,
-		requestParams: requestExpression,
-		variables:     variables,
+		Expression:    expression,
+		RequestParams: requestExpression,
+		Variables:     variables,
 	}
 
 	parameters := PopulateParameters(populateParamPayload)

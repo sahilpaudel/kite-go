@@ -45,7 +45,64 @@ func TestGetVersionsFromRequest(t *testing.T) {
 	variables = append(variables, variable1)
 	variables = append(variables, variable2)
 
-
 	versions := GetVersionsFromRequest(requestParam, variables)
 	assert.Len(t, versions, 2)
+}
+
+func TestPopulateParameters(t *testing.T) {
+	expression, err := govaluate.NewEvaluableExpression("Price>=100&&Age==32&&Bulls==3&&Swine==3.0&&IsValid==true")
+	assert.Nil(t, err)
+
+	requestParam := map[string]interface{}{
+		"Price": 10.9,
+		"Age":   32,
+	}
+
+	variable1 := Variable{
+		Name:  "Price",
+		Type:  Float,
+		Value: 10.9,
+	}
+	variable2 := Variable{
+		Name:  "Age",
+		Type:  Number,
+		Value: 32,
+	}
+	variable3 := Variable{
+		Name: "Bulls",
+		Type: Number,
+	}
+	variable4 := Variable{
+		Name: "Swine",
+		Type: Float,
+	}
+	variable5 := Variable{
+		Name: "IsValid",
+		Type: Boolean,
+	}
+
+	var variables []Variable
+	variables = append(variables, variable1)
+	variables = append(variables, variable2)
+	variables = append(variables, variable3)
+	variables = append(variables, variable4)
+	variables = append(variables, variable5)
+
+	payload := PopulateParamPayload{
+		Expression:    expression,
+		RequestParams: requestParam,
+		Variables:     variables,
+	}
+
+	parameters := PopulateParameters(payload)
+	assert.NotNil(t, parameters)
+	assert.Equal(t, parameters["IsValid"], false)
+	assert.Equal(t, parameters["Price"], 10.9)
+}
+
+func TestEvaluateVersionExpression(t *testing.T) {
+	var versionPayload []VersionEvaluationPayload
+	expression, err := EvaluateVersionExpression(versionPayload, nil, nil)
+	assert.Nil(t, expression)
+	assert.Nil(t, err)
 }

@@ -13,9 +13,9 @@ type VersionEvaluationPayload struct {
 }
 
 type PopulateParamPayload struct {
-	expression    *govaluate.EvaluableExpression
-	requestParams map[string]interface{}
-	variables     []Variable
+	Expression    *govaluate.EvaluableExpression
+	RequestParams map[string]interface{}
+	Variables     []Variable
 }
 
 func GetVersionsFromRequest(requestParam map[string]interface{}, variables []Variable) []string {
@@ -28,7 +28,7 @@ func GetVersionsFromRequest(requestParam map[string]interface{}, variables []Var
 		}
 	}
 
-	for key, _ := range requestParam {
+	for key := range requestParam {
 		if Contains(versionsDB, key) {
 			versions = append(versions, key)
 		}
@@ -45,7 +45,7 @@ func Contains(s []string, e string) bool {
 	return false
 }
 
-//GetExpressionToken for every complete expression there is 4 attributes variable, comparator, operator, value
+// GetExpressionToken for every complete expression there is 4 attributes variable, comparator, operator, value
 func GetExpressionToken(expression *govaluate.EvaluableExpression) []ExpressionVariableMeta {
 	var variables []ExpressionVariableMeta
 	variable := ExpressionVariableMeta{}
@@ -121,19 +121,19 @@ func EvaluateVersionExpression(requestVersions []VersionEvaluationPayload, expre
 // PopulateParameters To add missing variables from the request params and populate a default value for those
 func PopulateParameters(payload PopulateParamPayload) map[string]interface{} {
 	// a map that hold variable as key and value as the type of variable
-	variableTypeMap := make(map[string]interface{}, len(payload.variables))
+	variableTypeMap := make(map[string]interface{}, len(payload.Variables))
 
 	// populate the variable key map
-	for _, variable := range payload.variables {
+	for _, variable := range payload.Variables {
 		variableTypeMap[variable.Name] = variable.Type
 	}
 
 	// get all the variable from the expression
-	vars := payload.expression.Vars()
-	keysFromParams := make([]string, 0, len(payload.requestParams))
+	vars := payload.Expression.Vars()
+	keysFromParams := make([]string, 0, len(payload.RequestParams))
 
 	// iterate a map to fetch all the variable from request param
-	for k := range payload.requestParams {
+	for k := range payload.RequestParams {
 		keysFromParams = append(keysFromParams, fmt.Sprint(k))
 	}
 
@@ -148,14 +148,15 @@ func PopulateParameters(payload PopulateParamPayload) map[string]interface{} {
 	// add default dummy value for missing variables
 	for _, key := range keysNotPresentInParam {
 		if variableTypeMap[key] == Type(Number) {
-			payload.requestParams[key] = -1
+			payload.RequestParams[key] = -1
 		} else if variableTypeMap[key] == Type(Float) {
-			payload.requestParams[key] = -1.0
+			payload.RequestParams[key] = -1.0
 		} else if variableTypeMap[key] == Type(Boolean) {
-			payload.requestParams[key] = false
+			payload.RequestParams[key] = false
 		} else {
-			payload.requestParams[key] = ""
+			payload.RequestParams[key] = ""
 		}
 	}
-	return payload.requestParams
+
+	return payload.RequestParams
 }

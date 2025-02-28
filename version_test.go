@@ -72,3 +72,189 @@ func TestCompareVersion(t *testing.T) {
 	assert.Equal(t, "appVersion", result[0].Name)
 	assert.Equal(t, true, result[0].Result)
 }
+
+func TestCompareVersionFails(t *testing.T) {
+	parsedVersion, _ := goVersion.NewVersion(fmt.Sprint("0.0.0"))
+	versions := VersionEvaluationPayload{
+		name:          "appVersion",
+		parsedVersion: parsedVersion,
+	}
+	var requestVersions []VersionEvaluationPayload
+
+	variable1 := Variable{
+		Name:  "appVersion",
+		Type:  Version,
+		Value: "10.9.7",
+	}
+	var variables []Variable
+
+	variables = append(variables, variable1)
+
+	data := ExpressionVariableMeta{
+		Name:       "Version", // name invalid
+		Comparator: "<=",
+		Operator:   "&&",
+		Value:      "0.0.0",
+	}
+
+	var versionVariable []ExpressionVariableMeta
+	versionVariable = append(versionVariable, data)
+
+	requestVersions = append(requestVersions, versions)
+	_, _ = CompareVersion(requestVersions, versionVariable)
+}
+
+func TestCompareVersionOperatorEquals(t *testing.T) {
+	parsedVersion, _ := goVersion.NewVersion(fmt.Sprint("1.0.0"))
+	versions := VersionEvaluationPayload{
+		name:          "appVersion",
+		parsedVersion: parsedVersion,
+	}
+	var requestVersions []VersionEvaluationPayload
+
+	variable1 := Variable{
+		Name:  "appVersion",
+		Type:  Version,
+		Value: "1.0.0",
+	}
+	var variables []Variable
+
+	variables = append(variables, variable1)
+
+	data := ExpressionVariableMeta{
+		Name:       "appVersion",
+		Comparator: "==",
+		Operator:   "&&",
+		Value:      "1.0.0",
+	}
+
+	var versionVariable []ExpressionVariableMeta
+	versionVariable = append(versionVariable, data)
+
+	requestVersions = append(requestVersions, versions)
+	_, _ = CompareVersion(requestVersions, versionVariable)
+}
+
+func TestCompareVersionOperatorLessThanEquals(t *testing.T) {
+	parsedVersion, _ := goVersion.NewVersion(fmt.Sprint("1.0.0"))
+	versions := VersionEvaluationPayload{
+		name:          "appVersion",
+		parsedVersion: parsedVersion,
+	}
+	var requestVersions []VersionEvaluationPayload
+
+	variable1 := Variable{
+		Name:  "appVersion",
+		Type:  Version,
+		Value: "1.0.0",
+	}
+	var variables []Variable
+
+	variables = append(variables, variable1)
+
+	data := ExpressionVariableMeta{
+		Name:       "appVersion",
+		Comparator: "<=",
+		Operator:   "&&",
+		Value:      "1.0.0",
+	}
+
+	var versionVariable []ExpressionVariableMeta
+	versionVariable = append(versionVariable, data)
+
+	requestVersions = append(requestVersions, versions)
+	_, _ = CompareVersion(requestVersions, versionVariable)
+}
+
+func TestCompareVersionOperatorGreaterThan(t *testing.T) {
+	parsedVersion, _ := goVersion.NewVersion(fmt.Sprint("1.0.0"))
+	versions := VersionEvaluationPayload{
+		name:          "appVersion",
+		parsedVersion: parsedVersion,
+	}
+	var requestVersions []VersionEvaluationPayload
+
+	variable1 := Variable{
+		Name:  "appVersion",
+		Type:  Version,
+		Value: "1.0.0",
+	}
+	var variables []Variable
+
+	variables = append(variables, variable1)
+
+	data := ExpressionVariableMeta{
+		Name:       "appVersion",
+		Comparator: ">",
+		Operator:   "&&",
+		Value:      "1.0.0",
+	}
+
+	var versionVariable []ExpressionVariableMeta
+	versionVariable = append(versionVariable, data)
+
+	requestVersions = append(requestVersions, versions)
+	_, _ = CompareVersion(requestVersions, versionVariable)
+}
+
+func TestCompareVersionOperatorLessThan(t *testing.T) {
+	parsedVersion, _ := goVersion.NewVersion(fmt.Sprint("1.0.0"))
+	versions := VersionEvaluationPayload{
+		name:          "appVersion",
+		parsedVersion: parsedVersion,
+	}
+	var requestVersions []VersionEvaluationPayload
+
+	variable1 := Variable{
+		Name:  "appVersion",
+		Type:  Version,
+		Value: "1.0.0",
+	}
+	var variables []Variable
+
+	variables = append(variables, variable1)
+
+	data := ExpressionVariableMeta{
+		Name:       "appVersion",
+		Comparator: "<",
+		Operator:   "&&",
+		Value:      "1.0.0",
+	}
+
+	var versionVariable []ExpressionVariableMeta
+	versionVariable = append(versionVariable, data)
+
+	requestVersions = append(requestVersions, versions)
+	_, _ = CompareVersion(requestVersions, versionVariable)
+}
+
+func TestCompareVersionOperatorNotEquals(t *testing.T) {
+	parsedVersion, _ := goVersion.NewVersion(fmt.Sprint("1.0.0"))
+	versions := VersionEvaluationPayload{
+		name:          "appVersion",
+		parsedVersion: parsedVersion,
+	}
+	var requestVersions []VersionEvaluationPayload
+
+	variable1 := Variable{
+		Name:  "appVersion",
+		Type:  Version,
+		Value: "1.0.0",
+	}
+	var variables []Variable
+
+	variables = append(variables, variable1)
+
+	data := ExpressionVariableMeta{
+		Name:       "appVersion",
+		Comparator: "!=",
+		Operator:   "&&",
+		Value:      "1.0.0",
+	}
+
+	var versionVariable []ExpressionVariableMeta
+	versionVariable = append(versionVariable, data)
+
+	requestVersions = append(requestVersions, versions)
+	_, _ = CompareVersion(requestVersions, versionVariable)
+}
