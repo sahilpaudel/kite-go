@@ -1,28 +1,32 @@
-- name: Barecheck - Code Coverage
-  uses: barecheck/code-coverage-action@v1.0.0
-  with:
-    github-token: ${{ secrets.GITHUB_TOKEN }}  # GitHub Action token (Required)
-    
-    # Optional: Use Barecheck GitHub App token instead of `github-token`
-    # barecheck-github-app-token: ${{ secrets.BARECHECK_GITHUB_APP_TOKEN }} 
+name: Barecheck Code Coverage
 
-    # Optional: Barecheck API key
-    # barecheck-api-key: ${{ secrets.BARECHECK_API_KEY }} 
+on: [push, pull_request]
 
-    # Required: Code coverage report file (default is ./coverage/lcov.info)
-    lcov-file: ./coverage/lcov.info  
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
 
-    # Optional: Base coverage report file to compare against
-    # base-lcov-file: ./coverage/base-lcov.info  
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    # Optional: Minimum coverage ratio difference threshold
-    minimum-ratio: 0.01  
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
 
-    # Optional: Send a GitHub PR comment with coverage summary
-    send-summary-comment: true  
+      - name: Run tests with coverage
+        run: go test ./... -coverprofile=coverage.out
 
-    # Optional: Show uncovered lines as annotations (options: warning | error)
-    show-annotations: warning  
+      - name: Convert coverage to LCOV
+        run: go tool cover -func=coverage.out > coverage/lcov.info
 
-    # Optional: Application name (useful for multiple reports)
-    app-name: "Kite-Go"
+      - name: Barecheck - Code Coverage
+        uses: barecheck/code-coverage-action@v1.0.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          lcov-file: ./coverage/lcov.info
+          minimum-ratio: 0.01
+          send-summary-comment: true
+          show-annotations: warning
+          app-name: "Kite-Go"
