@@ -19,7 +19,7 @@ jobs:
         run: go test ./... -coverprofile=coverage.out
 
       - name: Convert coverage to LCOV
-        run: go tool cover -func=coverage.out > coverage/lcov.info
+        run: go tool cover -func=coverage.out > ./coverage/lcov.info
 
       - name: Barecheck - Code Coverage
         uses: barecheck/code-coverage-action@v1.0.0
